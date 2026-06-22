@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Risk Register | Priyanshu</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --border: #1e2330;
+    --accent: #00d4aa;
+    --accent2: #4f8fff;
+    --danger: #ff4f4f;
+    --warn: #ffaa00;
+    --low: #00d4aa;
+    --text: #c8d0e0;
+    --muted: #5a6478;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+
+  .logo-area { display: flex; flex-direction: column; gap: 4px; }
+
+  .logo-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  .author-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .stat { text-align: right; }
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+  }
+  .stat-num.red { color: var(--danger); }
+  .stat-num.amber { color: var(--warn); }
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  /* MAIN LAYOUT */
+  main { padding: 32px 40px; max-width: 1200px; margin: 0 auto; }
+
+  /* ADD RISK FORM */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+
+  .form-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  input, select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus { border-color: var(--accent); }
+  select option { background: var(--bg); }
+
+  .add-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .add-btn:hover { opacity: 0.85; }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* RISK TABLE */
+  .table-wrap { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 14px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  td {
+    padding: 13px 14px;
+    vertical-align: middle;
+  }
+
+  .risk-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .risk-name { font-weight: 400; color: #dde4f0; }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    text-transform: uppercase;
+  }
+
+  .badge-critical { background: rgba(255,79,79,0.12); color: var(--danger); border: 1px solid rgba(255,79,79,0.3); }
+  .badge-high     { background: rgba(255,170,0,0.12); color: var(--warn);   border: 1px solid rgba(255,170,0,0.3); }
+  .badge-medium   { background: rgba(79,143,255,0.12); color: var(--accent2); border: 1px solid rgba(79,143,255,0.3); }
+  .badge-low      { background: rgba(0,212,170,0.10); color: var(--low);   border: 1px solid rgba(0,212,170,0.3); }
+
+  .score-cell {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .score-high { color: var(--danger); }
+  .score-med  { color: var(--warn); }
+  .score-low  { color: var(--accent); }
+
+  .del-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .del-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-text { font-family: var(--mono); font-size: 13px; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 700px) {
+    header { flex-direction: column; gap: 20px; padding: 20px; }
+    main { padding: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .header-stats { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <span class="logo-tag">// GRC Portfolio Project</span>
+    <h1>Cyber Risk Register</h1>
+    <span class="author-tag">Priyanshu &nbsp;·&nbsp; github.com/priyanshu-priyanshu-grc</span>
+  </div>
+  <div class="header-stats">
+    <div class="stat">
+      <div class="stat-num" id="totalCount">0</div>
+      <div class="stat-label">Total Risks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num red" id="criticalCount">0</div>
+      <div class="stat-label">Critical</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num amber" id="highCount">0</div>
+      <div class="stat-label">High</div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ADD RISK FORM -->
+  <div class="form-card">
+    <div class="form-title">// Add New Risk</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Risk Description</label>
+        <input type="text" id="riskName" placeholder="e.g. Unpatched systems exposed to ransomware">
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select id="riskCategory">
+          <option value="Access Control">Access Control</option>
+          <option value="Data Protection">Data Protection</option>
+          <option value="Network">Network</option>
+          <option value="Endpoint">Endpoint</option>
+          <option value="Cloud">Cloud</option>
+          <option value="Backup & DR">Backup & DR</option>
+          <option value="Compliance">Compliance</option>
+          <option value="Third Party">Third Party</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Likelihood (1–5)</label>
+        <select id="riskLikelihood">
+          <option value="1">1 — Rare</option>
+          <option value="2">2 — Unlikely</option>
+          <option value="3" selected>3 — Possible</option>
+          <option value="4">4 — Likely</option>
+          <option value="5">5 — Almost Certain</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Impact (1–5)</label>
+        <select id="riskImpact">
+          <option value="1">1 — Negligible</option>
+          <option value="2">2 — Minor</option>
+          <option value="3" selected>3 — Moderate</option>
+          <option value="4">4 — Major</option>
+          <option value="5">5 — Catastrophic</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:14px; display:flex; gap:12px; align-items:center;">
+      <button class="add-btn" onclick="addRisk()">+ Add Risk</button>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Score = Likelihood × Impact &nbsp;|&nbsp; 1–6 Low · 7–14 Medium · 15–19 High · 20–25 Critical</span>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+    <button class="filter-btn" onclick="setFilter('Critical', this)">Critical</button>
+    <button class="filter-btn" onclick="setFilter('High', this)">High</button>
+    <button class="filter-btn" onclick="setFilter('Medium', this)">Medium</button>
+    <button class="filter-btn" onclick="setFilter('Low', this)">Low</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Risk Description</th>
+          <th>Category</th>
+          <th>Likelihood</th>
+          <th>Impact</th>
+          <th>Score</th>
+          <th>Rating</th>
+          <th>Date Added</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="riskTableBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🛡️</div>
+      <div class="empty-text">No risks logged yet. Add your first risk above.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>// Cyber Risk Register v1.0 — Built by Priyanshu</span>
+    <span>ISO 27001 · NIST CSF · GRC Portfolio</span>
+  </div>
+</main>
+
+<script>
+  let risks = JSON.parse(localStorage.getItem('cyberRisks') || '[]');
+  let filter = 'all';
+  let counter = parseInt(localStorage.getItem('riskCounter') || '0');
+
+  function getRating(score) {
+    if (score >= 20) return 'Critical';
+    if (score >= 15) return 'High';
+    if (score >= 7)  return 'Medium';
+    return 'Low';
+  }
+
+  function getBadgeClass(rating) {
+    return 'badge badge-' + rating.toLowerCase();
+  }
+
+  function getScoreClass(score) {
+    if (score >= 15) return 'score-high';
+    if (score >= 7)  return 'score-med';
+    return 'score-low';
+  }
+
+  function addRisk() {
+    const name = document.getElementById('riskName').value.trim();
+    if (!name) { alert('Please enter a risk description.'); return; }
+
+    counter++;
+    const likelihood = parseInt(document.getElementById('riskLikelihood').value);
+    const impact = parseInt(document.getElementById('riskImpact').value);
+    const score = likelihood * impact;
+    const rating = getRating(score);
+
+    const risk = {
+      id: counter,
+      name,
+      category: document.getElementById('riskCategory').value,
+      likelihood,
+      impact,
+      score,
+      rating,
+      date: new Date().toLocaleDateString('en-CA')
+    };
+
+    risks.unshift(risk);
+    localStorage.setItem('cyberRisks', JSON.stringify(risks));
+    localStorage.setItem('riskCounter', counter);
+    document.getElementById('riskName').value = '';
+    render();
+  }
+
+  function deleteRisk(id) {
+    risks = risks.filter(r => r.id !== id);
+    localStorage.setItem('cyberRisks', JSON.stringify(risks));
+    render();
+  }
+
+  function setFilter(val, btn) {
+    filter = val;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function render() {
+    const filtered = filter === 'all' ? risks : risks.filter(r => r.rating === filter);
+    const tbody = document.getElementById('riskTableBody');
+    const empty = document.getElementById('emptyState');
+
+    const critical = risks.filter(r => r.rating === 'Critical').length;
+    const high = risks.filter(r => r.rating === 'High').length;
+    document.getElementById('totalCount').textContent = risks.length;
+    document.getElementById('criticalCount').textContent = critical;
+    document.getElementById('highCount').textContent = high;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map(r => `
+      <tr>
+        <td class="risk-id">R-${String(r.id).padStart(3,'0')}</td>
+        <td class="risk-name">${r.name}</td>
+        <td><span style="font-size:12px;color:var(--muted)">${r.category}</span></td>
+        <td style="font-family:var(--mono);font-size:13px">${r.likelihood}</td>
+        <td style="font-family:var(--mono);font-size:13px">${r.impact}</td>
+        <td><span class="score-cell ${getScoreClass(r.score)}">${r.score}</span></td>
+        <td><span class="${getBadgeClass(r.rating)}">${r.rating}</span></td>
+        <td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${r.date}</td>
+        <td><button class="del-btn" onclick="deleteRisk(${r.id})">remove</button></td>
+      </tr>
+    `).join('');
+  }
+
+  // Seed with sample data on first load
+  if (risks.length === 0) {
+    const samples = [
+      { name: 'Ransomware via unpatched endpoint', category: 'Endpoint', likelihood: 4, impact: 5 },
+      { name: 'MFA not enforced for remote access', category: 'Access Control', likelihood: 3, impact: 4 },
+      { name: 'Backup not tested — unknown recoverability', category: 'Backup & DR', likelihood: 3, impact: 5 },
+      { name: 'Third-party vendor lacks security assessment', category: 'Third Party', likelihood: 3, impact: 3 },
+      { name: 'Cloud storage bucket publicly accessible', category: 'Cloud', likelihood: 2, impact: 4 },
+    ];
+    samples.forEach(s => {
+      counter++;
+      const score = s.likelihood * s.impact;
+      risks.push({ id: counter, name: s.name, category: s.category, likelihood: s.likelihood, impact: s.impact, score, rating: getRating(score), date: new Date().toLocaleDateString('en-CA') });
+    });
+    localStorage.setItem('cyberRisks', JSON.stringify(risks));
+    localStorage.setItem('riskCounter', counter);
+  }
+
+  render();
+</script>
+</body>
+</html>
